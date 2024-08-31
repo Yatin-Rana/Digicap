@@ -8,6 +8,8 @@ export default function Experience() {
                     className="w-[70%] h-[80%] ml-8 rounded-xl"
                     src="https://images.pexels.com/photos/6325984/pexels-photo-6325984.jpeg"
                     alt="A digital workspace with a computer and various digital tools"
+                    width={500}
+                    height={500}
                 />
             </div>
             <div className="w-[50%] flex flex-col">
