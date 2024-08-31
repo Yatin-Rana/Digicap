@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 async function submitContact(formData: FormData) {
   'use server'
-  
+
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const message = formData.get('message') as string;
@@ -41,8 +41,13 @@ export default function ContactUs() {
         <div className="mt-12 text-center">
           <h3 className="text-lg font-semibold text-gray-800">Or Reach Us At:</h3>
           <p className="text-gray-600">Email: digicapmedia@gmail.com</p>
-          <p className="text-gray-600">Phone: 7559781539,780776344</p>
-          <p className="text-gray-600">Address:V.P.O </p>
+          <p className="text-gray-600 mb-4">
+            Phone:
+            <a href="tel:+917559781539" className="text-gray-600 ">+91 7559781539</a>,
+            <a href="tel:+917807763447" className="text-gray-600 ">+91 7807763447</a>
+          </p>
+
+          <p className="text-gray-600">Address:VPO Dharamshala,Himachal Pradesh</p>
         </div>
       </div>
     </section>
