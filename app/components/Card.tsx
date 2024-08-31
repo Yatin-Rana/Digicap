@@ -3,7 +3,7 @@
 import { useState } from "react";
 import 'remixicon/fonts/remixicon.css';
 
-export function Card() {
+export default function Card() {
   const [items, setItems] = useState([
     {
       image: <i className="ri-search-line"></i>,

@@ -1,5 +1,5 @@
 
-import { Card } from "../components/Card"
+import Card from "../components/Card"
 import Experience from "../components/Experience"
 import TopContainer from "../components/TopContainer"
 import Footer from "../components/Footer"

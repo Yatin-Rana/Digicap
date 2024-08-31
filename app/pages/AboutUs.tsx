@@ -2,7 +2,7 @@ import CommitmentHighlight from "../components/CommitmentHighlight";
 import OurStory from "../components/OurStory";
 import WhyUs from "../components/WhyUs";
 
-export default function () {
+export default function AboutUs () {
 
     return (
         <div className="h-screen">

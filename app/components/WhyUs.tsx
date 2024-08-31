@@ -2,7 +2,7 @@
 import { useState } from "react"
 import 'remixicon/fonts/remixicon.css'
 
-export default function () {
+export default function WhyUs () {
     const [item, setItem] = useState([
         {
             image: <i className="ri-line-chart-line"></i>
@@ -31,7 +31,7 @@ export default function () {
     ])
     return (<div className="grid grid-cols-2 gap-4 p-4 w-[80%] m-auto">
         {item.map((items, index) => (
-            <div className="flex gap-10 rounded-xl ">
+            <div className="flex gap-10 rounded-xl " key={index}>
                 <div className="text-4xl text-white rounded-lg bg-purple-500 h-12">{items.image}</div>
                 <div className="flex flex-col">
                     <div className="mb-4 font-bold text-3xl">{items.title}</div>

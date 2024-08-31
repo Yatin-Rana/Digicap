@@ -1,4 +1,4 @@
-export default function() {
+export default function OurStory() {
     return (
       <section className="bg-gray-100 py-20 ">
         <div className="w-[80%] mx-auto bg-white rounded-lg shadow-xl overflow-hidden transform -translate-y-6">
