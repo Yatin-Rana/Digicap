@@ -47,7 +47,7 @@ export default function ContactUs() {
             <a href="tel:+917807763447" className="text-gray-600 ">+91 7807763447</a>
           </p>
 
-          <p className="text-gray-600">Address:VPO Dharamshala,Himachal Pradesh</p>
+          <p className="text-gray-600">Address:Dharamshala, Himachal Pradesh</p>
         </div>
       </div>
     </section>
