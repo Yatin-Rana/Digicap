@@ -4,6 +4,7 @@ import Image from 'next/image'
 import groq from 'groq'
 import { format } from 'date-fns'
 import { PortableText } from '@portabletext/react'
+import { PortableTextBlock, PortableTextSpan } from '@portabletext/types'
 
 async function getPosts() {
   try {
@@ -26,33 +27,37 @@ async function getPosts() {
   }
 }
 
-function trimBodyContent(body: any) {
-  if (typeof body === 'string') {
-    const words = body.split(' ')
-    return words.slice(0, 20).join(' ') + (words.length > 20 ? '...' : '')
-  } else if (Array.isArray(body)) {
-    let wordCount = 0
-    let trimmedBody = []
-    for (let block of body) {
-      if (block._type === 'block') {
-        //@ts-ignore
-        const words = block.children.flatMap(child  => child.text.split(' '))
-        for (let word of words) {
-          if (wordCount < 20) {
-            trimmedBody.push(word)
-            wordCount++
-          } else {
-            break
+function trimBodyContent(body: PortableTextBlock[] | string) {
+    if (typeof body === 'string') {
+      const words = body.split(' ')
+      return words.slice(0, 20).join(' ') + (words.length > 20 ? '...' : '')
+    } else if (Array.isArray(body)) {
+      let wordCount = 0
+      let trimmedBody: string[] = []
+      for (let block of body) {
+        if (block._type === 'block' && Array.isArray(block.children)) {
+          const words = block.children.flatMap((child) => {
+            if (typeof child === 'object' && 'text' in child && typeof child.text === 'string') {
+              return child.text.split(' ')
+            }
+            return []
+          })
+          for (let word of words) {
+            if (wordCount < 20) {
+              trimmedBody.push(word)
+              wordCount++
+            } else {
+              break
+            }
           }
+          if (wordCount >= 20) break
         }
-        if (wordCount >= 20) break
       }
+      return trimmedBody.join(' ') + '...'
     }
-    return trimmedBody.join(' ') + '...'
+    return ''
   }
-  return ''
-}
-
+  
 export default async function BlogPage() {
   try {
     const posts = await getPosts()
