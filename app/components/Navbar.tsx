@@ -13,6 +13,7 @@ export default function Navbar() {
           <Link href="/" className="text-black hover:text-[#yourColor] transform hover:scale-110 transition-transform duration-200">Home</Link>
           <Link href="/about" className="text-black hover:text-[#yourColor] transform hover:scale-110 transition-transform duration-200">About</Link>
           <Link href="/contact" className="text-black hover:text-[#yourColor] transform hover:scale-110 transition-transform duration-200">Contact</Link>
+          <Link href="/blogs" className="text-black hover:text-[#yourColor] transform hover:scale-110 transition-transform duration-200">Blogs</Link>
         </div>
       </div>
     </nav>
