@@ -44,7 +44,7 @@ export default function Navbar() {
   );
 }
 
-function NavLink({ href, children, mobile }) {
+function NavLink({ href, children, mobile }:any) {
   return (
     <Link href={href} className={`text-black hover:text-[#yourColor] transform hover:scale-110 transition-transform duration-200 ${mobile ? 'block py-2' : ''}`}>
       {children}
