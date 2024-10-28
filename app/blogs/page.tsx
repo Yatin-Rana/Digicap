@@ -1,12 +1,26 @@
+// pages/blog/index.tsx or app/blog/page.tsx (depending on your Next.js version)
+'use client'
 import { client } from '../../sanity/lib/client'
 import Link from 'next/link'
 import Image from 'next/image'
 import groq from 'groq'
 import { format } from 'date-fns'
 import { PortableText } from '@portabletext/react'
-import { PortableTextBlock, PortableTextSpan } from '@portabletext/types'
+import { PortableTextBlock } from '@portabletext/types'
+import ErrorBoundary from '../components/errorBoundary' // You need to create this component
+import { useState, useEffect } from 'react'
 
-async function getPosts() {
+interface Post {
+  _id: string
+  title: string
+  body: PortableTextBlock[]
+  slug: { current: string }
+  publishedAt: string
+  excerpt?: string
+  mainImage?: { asset: { url: string } }
+}
+
+async function getPosts(): Promise<Post[]> {
   try {
     const posts = await client.fetch(groq`
       *[_type == "post"] | order(publishedAt desc) {
@@ -19,7 +33,6 @@ async function getPosts() {
         mainImage
       }
     `)
-    console.log('Fetched posts:', posts)
     return posts
   } catch (error) {
     console.error('Error fetching posts:', error)
@@ -27,58 +40,84 @@ async function getPosts() {
   }
 }
 
-function trimBodyContent(body: PortableTextBlock[] | string) {
-    if (typeof body === 'string') {
-      const words = body.split(' ')
-      return words.slice(0, 20).join(' ') + (words.length > 20 ? '...' : '')
-    } else if (Array.isArray(body)) {
-      let wordCount = 0
-      let trimmedBody: string[] = []
-      for (let block of body) {
-        if (block._type === 'block' && Array.isArray(block.children)) {
-          const words = block.children.flatMap((child) => {
-            if (typeof child === 'object' && 'text' in child && typeof child.text === 'string') {
-              return child.text.split(' ')
-            }
-            return []
-          })
-          for (let word of words) {
-            if (wordCount < 20) {
-              trimmedBody.push(word)
-              wordCount++
-            } else {
-              break
-            }
+function trimBodyContent(body: PortableTextBlock[] | string): string {
+  if (typeof body === 'string') {
+    const words = body.split(' ')
+    return words.slice(0, 20).join(' ') + (words.length > 20 ? '...' : '')
+  } else if (Array.isArray(body)) {
+    let wordCount = 0
+    let trimmedBody: string[] = []
+    for (let block of body) {
+      if (block._type === 'block' && Array.isArray(block.children)) {
+        const words = block.children.flatMap((child) => {
+          if (typeof child === 'object' && 'text' in child && typeof child.text === 'string') {
+            return child.text.split(' ')
           }
-          if (wordCount >= 20) break
+          return []
+        })
+        for (let word of words) {
+          if (wordCount < 20) {
+            trimmedBody.push(word)
+            wordCount++
+          } else {
+            break
+          }
         }
+        if (wordCount >= 20) break
       }
-      return trimmedBody.join(' ') + '...'
     }
-    return ''
+    return trimmedBody.join(' ') + '...'
   }
-  
-export default async function BlogPage() {
-  try {
-    const posts = await getPosts()
-    
-    if (!posts || posts.length === 0) {
-      return <div className="text-center text-2xl mt-10">No posts found</div>
+  return ''
+}
+
+export default function BlogPage() {
+  const [posts, setPosts] = useState<Post[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const fetchedPosts = await getPosts()
+        setPosts(fetchedPosts)
+      } catch (err) {
+        setError('Failed to load blog posts')
+        console.error(err)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    return (
+    fetchPosts()
+  }, [])
+
+  if (isLoading) {
+    return <div className="text-center text-2xl mt-10">Loading...</div>
+  }
+
+  if (error) {
+    return <div className="text-center text-2xl mt-10 text-red-600">{error}</div>
+  }
+
+  if (!posts || posts.length === 0) {
+    return <div className="text-center text-2xl mt-10">No posts found</div>
+  }
+
+  return (
+    <ErrorBoundary>
       <div className="container mx-auto px-4 py-12 max-w-3xl">
         <h1 className="text-5xl font-bold text-center mb-12 text-gray-800">Our Blog</h1>
         <div className="space-y-16">
-          {posts.map((post: any) => (
+          {posts.map((post) => (
             <div key={post._id} className="bg-white rounded-xl shadow-lg overflow-hidden">
               {post.mainImage && post.mainImage.asset && (
                 <div className="relative h-64 w-full">
                   <Image 
                     src={post.mainImage.asset.url}
                     alt={post.title}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: 'cover' }}
                   />
                 </div>
               )}
@@ -108,9 +147,6 @@ export default async function BlogPage() {
           ))}
         </div>
       </div>
-    )
-  } catch (error) {
-    console.error('Error in BlogPage:', error)
-    return <div className="text-center text-2xl mt-10 text-red-600">Error loading blog posts</div>
-  }
+    </ErrorBoundary>
+  )
 }

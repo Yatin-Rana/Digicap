@@ -16,6 +16,7 @@
     "@sanity/icons": "^3.4.0",
     "@sanity/image-url": "^1.0.2",
     "@sanity/vision": "^3.62.2",
+    "date-fns": "^4.1.0",
     "express": "^4.19.2",
     "groq": "^3.62.2",
     "next": "14.2.6",
