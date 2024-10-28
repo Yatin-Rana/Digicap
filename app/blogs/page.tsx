@@ -35,7 +35,8 @@ function trimBodyContent(body: any) {
     let trimmedBody = []
     for (let block of body) {
       if (block._type === 'block') {
-        const words = block.children.flatMap(child => child.text.split(' '))
+        //@ts-ignore
+        const words = block.children.flatMap(child  => child.text.split(' '))
         for (let word of words) {
           if (wordCount < 20) {
             trimmedBody.push(word)
